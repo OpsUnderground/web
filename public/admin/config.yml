@@ -1,0 +1,21 @@
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/web
+  branch: main
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: posts
+    label: Posts
+    folder: src/content/posts
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Publish Date, name: date, widget: datetime }
+      - { label: Category, name: category, widget: select, options: [Architecture, GTM Engineering, Roundtable Recap, Revenue Operations, Tools] }
+      - { label: Excerpt, name: excerpt, widget: text }
+      - { label: Body, name: body, widget: markdown }
+      - { label: Featured, name: featured, widget: boolean, default: false }

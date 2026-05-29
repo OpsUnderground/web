@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const posts = await getCollection('posts');
+const roundtables = posts
+  .filter(p => p.data.category === 'Roundtable Recap')
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Base title="Roundtables">
+  <Nav />
+  <section class="page-header">
+    <div class="eyebrow">Monthly conversations</div>
+    <h1>Roundtables</h1>
+    <p>A room full of operators building the systems, not just running them. No vendors. No pitches. Real problems.</p>
+  </section>
+  <div class="divider"></div>
+  <section class="recaps">
+    <div class="section-label">Past recaps</div>
+    {roundtables.length > 0 ? roundtables.map(post => (
+      <a href={`/posts/${post.id}`} class="recap-row">
+        <div class="date">{post.data.date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+        <h2>{post.data.title}</h2>
+        <p>{post.data.excerpt}</p>
+      </a>
+    )) : (
+      <div class="empty">Recaps coming soon.</div>
+    )}
+  </section>
+  <Footer />
+</Base>
+
+<style>
+  .page-header { padding: 4rem 2.5rem 3rem; max-width: 640px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; }
+  h1 { font-family: var(--font-serif); font-size: 3rem; font-weight: 400; color: var(--white); letter-spacing: -0.02em; margin: 0 0 1rem; }
+  .page-header p { font-size: 16px; line-height: 1.7; color: var(--muted); }
+  .divider { height: 0.5px; background: var(--border); margin: 0 2.5rem; }
+  .recaps { padding: 3rem 2.5rem; }
+  .section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(240,237,230,0.3); margin-bottom: 2rem; }
+  .recap-row { display: block; padding: 2rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
+  .recap-row:hover { opacity: 0.75; }
+  .date { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; color: var(--green); text-transform: uppercase; margin-bottom: 0.75rem; }
+  .recap-row h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 400; color: var(--white); margin: 0 0 0.5rem; letter-spacing: -0.01em; line-height: 1.2; }
+  .recap-row p { font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 640px; }
+  .empty { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding: 3rem 0; }
+</style>

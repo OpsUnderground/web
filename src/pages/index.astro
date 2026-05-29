@@ -1,0 +1,115 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const posts = await getCollection('posts');
+const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const featured = sorted.find(p => p.data.featured) || sorted[0];
+const recent = sorted.filter(p => p !== featured).slice(0, 3);
+---
+<Base title="Home">
+  <Nav />
+  <section class="hero">
+    <div class="eyebrow">For GTM Engineers &amp; Revenue Operators</div>
+    <h1>Stop cobbling.<br><em>Start architecting.</em></h1>
+    <p>A destination for revenue operators who are done duct-taping systems together.</p>
+    <div class="actions">
+      <a href="/articles" class="btn-primary">Read the latest</a>
+      <a href="/about" class="btn-ghost">What is this place? →</a>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section class="posts-section">
+    <div class="section-label">Latest thinking</div>
+    {sorted.length > 0 ? (
+      <div class="posts-grid">
+        {featured && (
+          <a href={`/posts/${featured.id}`} class="post-featured">
+            <div class="post-tag">{featured.data.category}</div>
+            <h2>{featured.data.title}</h2>
+            <p>{featured.data.excerpt}</p>
+            <div class="post-meta">
+              <span>Tim Gosnell</span><span class="dot">·</span>
+              <span>{featured.data.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+            </div>
+          </a>
+        )}
+        <div class="post-stack">
+          {recent.map(post => (
+            <a href={`/posts/${post.id}`} class="post-item">
+              <div class="post-tag">{post.data.category}</div>
+              <h3>{post.data.title}</h3>
+              <div class="post-meta" style="margin-top:0.75rem">
+                <span>Tim Gosnell</span><span class="dot">·</span>
+                <span>{post.data.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="empty">Content coming soon.</div>
+    )}
+  </section>
+  <blockquote class="thesis">
+    <p>"The tools aren't the problem. The architecture is. Every workaround you've built is live documentation of a gap your stack can't fill."</p>
+    <cite>— The Ops Underground thesis</cite>
+  </blockquote>
+  <div class="roundtable-bar">
+    <div>
+      <div class="rt-label">Monthly Roundtable</div>
+      <div class="rt-title">GTM Engineering: Where RevOps meets the stack</div>
+      <div class="rt-desc">A conversation for operators building the systems, not just running them.</div>
+    </div>
+    <a href="/roundtables" class="rt-action">Learn more →</a>
+  </div>
+  <Footer />
+</Base>
+
+<style>
+  .hero { padding: 6rem 2.5rem 5rem; max-width: 780px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content: ''; display: inline-block; width: 20px; height: 0.5px; background: var(--green); }
+  h1 { font-family: var(--font-serif); font-size: clamp(2.8rem, 5vw, 4.2rem); line-height: 1.08; font-weight: 400; color: var(--white); margin: 0 0 1.5rem; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--green); }
+  .hero p { font-size: 16px; line-height: 1.7; color: var(--muted); max-width: 540px; margin: 0 0 2.5rem; }
+  .actions { display: flex; align-items: center; gap: 1.5rem; }
+  .btn-primary { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; background: var(--green); color: var(--black); padding: 12px 24px; border-radius: 2px; transition: background 0.2s; }
+  .btn-primary:hover { background: var(--green-light); }
+  .btn-ghost { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+  .btn-ghost:hover { color: var(--white); }
+  .divider { height: 0.5px; background: var(--border); margin: 0 2.5rem; }
+  .posts-section { padding: 4rem 2.5rem; }
+  .section-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(240,237,230,0.3); margin-bottom: 2rem; }
+  .posts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5px; background: var(--border); }
+  .post-featured { background: var(--black); padding: 2.5rem; display: block; transition: background 0.15s; }
+  .post-featured:hover { background: var(--surface); }
+  .post-featured h2 { font-family: var(--font-serif); font-size: 1.9rem; line-height: 1.15; font-weight: 400; color: var(--white); margin: 0 0 1rem; letter-spacing: -0.01em; }
+  .post-featured p { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0 0 1.25rem; }
+  .post-stack { display: flex; flex-direction: column; gap: 1.5px; background: var(--border); }
+  .post-item { background: var(--black); padding: 1.75rem 1.5rem; display: block; transition: background 0.15s; }
+  .post-item:hover { background: var(--surface); }
+  .post-item h3 { font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.25; font-weight: 400; color: var(--white); margin: 0; letter-spacing: -0.01em; }
+  .post-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 0.75rem; }
+  .post-meta { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: rgba(240,237,230,0.25); display: flex; align-items: center; gap: 8px; }
+  .dot { color: rgba(240,237,230,0.15); }
+  .empty { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding: 3rem 0; }
+  .thesis { background: #0f110d; border-left: 2px solid var(--green); padding: 2.5rem; margin: 0 2.5rem; }
+  .thesis p { font-family: var(--font-serif); font-size: 1.35rem; line-height: 1.45; font-weight: 400; color: rgba(240,237,230,0.85); font-style: italic; margin: 0 0 1rem; max-width: 600px; }
+  .thesis cite { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(240,237,230,0.25); font-style: normal; }
+  .roundtable-bar { background: var(--surface); padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 0.5px solid var(--border); margin-top: 1.5px; gap: 2rem; }
+  .rt-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 0.4rem; }
+  .rt-title { font-size: 15px; font-weight: 500; color: var(--white); }
+  .rt-desc { font-size: 13px; color: var(--muted); margin-top: 0.25rem; }
+  .rt-action { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); border: 0.5px solid rgba(59,140,74,0.4); padding: 8px 18px; border-radius: 2px; white-space: nowrap; transition: background 0.2s, color 0.2s; }
+  .rt-action:hover { background: var(--green); color: var(--black); }
+  @media (max-width: 700px) {
+    .hero { padding: 4rem 1.25rem 3rem; }
+    .posts-grid { grid-template-columns: 1fr; }
+    .thesis { margin: 0 1.25rem; }
+    .posts-section { padding: 3rem 1.25rem; }
+    .roundtable-bar { flex-direction: column; align-items: flex-start; padding: 1.5rem 1.25rem; }
+  }
+</style>

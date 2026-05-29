@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const posts = await getCollection('posts');
+const sorted = posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Base title="Articles">
+  <Nav />
+  <section class="page-header">
+    <div class="eyebrow">All writing</div>
+    <h1>Articles</h1>
+  </section>
+  <div class="divider"></div>
+  <section class="articles">
+    {sorted.length > 0 ? sorted.map(post => (
+      <a href={`/posts/${post.id}`} class="article-row">
+        <div class="article-meta">
+          <span class="tag">{post.data.category}</span>
+          <span class="date">{post.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+        </div>
+        <h2>{post.data.title}</h2>
+        <p>{post.data.excerpt}</p>
+      </a>
+    )) : (
+      <div class="empty">Articles coming soon.</div>
+    )}
+  </section>
+  <Footer />
+</Base>
+
+<style>
+  .page-header { padding: 4rem 2.5rem 3rem; }
+  .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 1rem; }
+  h1 { font-family: var(--font-serif); font-size: 3rem; font-weight: 400; color: var(--white); letter-spacing: -0.02em; }
+  .divider { height: 0.5px; background: var(--border); margin: 0 2.5rem; }
+  .articles { padding: 2rem 2.5rem; }
+  .article-row { display: block; padding: 2rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
+  .article-row:hover { opacity: 0.75; }
+  .article-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; }
+  .tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); }
+  .date { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: rgba(240,237,230,0.25); }
+  .article-row h2 { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 400; color: var(--white); margin: 0 0 0.5rem; letter-spacing: -0.01em; line-height: 1.2; }
+  .article-row p { font-size: 14px; line-height: 1.6; color: var(--muted); max-width: 640px; }
+  .empty { font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding: 3rem 0; }
+</style>

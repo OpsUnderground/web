@@ -1,0 +1,121 @@
+---
+import Base from './Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const { frontmatter } = Astro.props;
+---
+<Base title={frontmatter.title} description={frontmatter.excerpt}>
+  <Nav />
+  <article>
+    <header>
+      <div class="post-tag">{frontmatter.category}</div>
+      <h1>{frontmatter.title}</h1>
+      <div class="post-meta">
+        <span>Tim Gosnell</span>
+        <span class="dot">·</span>
+        <span>{new Date(frontmatter.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+      </div>
+    </header>
+    <div class="post-body">
+      <slot />
+    </div>
+  </article>
+  <Footer />
+</Base>
+
+<style>
+  article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 4rem 2.5rem 6rem;
+  }
+
+  header { margin-bottom: 3rem; }
+
+  .post-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 1.25rem;
+  }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0 0 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .post-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(240,237,230,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot { color: rgba(240,237,230,0.15); }
+
+  .post-body {
+    font-size: 17px;
+    line-height: 1.75;
+    color: rgba(240,237,230,0.82);
+  }
+
+  .post-body h2 {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--white);
+    margin: 2.5rem 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .post-body h3 {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--white);
+    margin: 2rem 0 0.75rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  .post-body p { margin: 0 0 1.5rem; }
+
+  .post-body a { color: var(--green); border-bottom: 0.5px solid rgba(59,140,74,0.4); }
+  .post-body a:hover { border-color: var(--green); }
+
+  .post-body blockquote {
+    border-left: 2px solid var(--green);
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    margin: 2rem 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: rgba(240,237,230,0.7);
+  }
+
+  .post-body code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: rgba(255,255,255,0.06);
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .post-body hr {
+    border: none;
+    border-top: 0.5px solid var(--border);
+    margin: 3rem 0;
+  }
+</style>
